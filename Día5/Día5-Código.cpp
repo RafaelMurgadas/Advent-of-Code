@@ -4,19 +4,19 @@
 #include <unordered_map>
 #include <fstream>
 #include <cstring>
-
-bool isCorrectOrderWithGraph(const std::vector<int>& update, const std::unordered_map<int, std::vector<int>>& graph) {
+// Función auxiliar para verificar el orden topológico en una actualización
+bool esOrdenCorrectoConGrafo(const std::vector<int>& actualizacion, const std::unordered_map<int, std::vector<int>>& grafo) {
     // Crear un mapa para almacenar la posición de cada página en la actualización
-    std::unordered_map<int, int> position;
-    for (int i = 0; i < update.size(); ++i) {
-        position[update[i]] = i;
+    std::unordered_map<int, int> posicion;
+    for (int i = 0; i < actualizacion.size(); ++i) {
+        posicion[actualizacion[i]] = i;
     }
 
     // Verificar cada nodo y sus vecinos
-    for (const auto& [node, neighbors] : graph) {
-        if (position.find(node) != position.end()) {
-            for (int neighbor : neighbors) {
-                if (position.find(neighbor) != position.end() && position[node] > position[neighbor]) {
+    for (const auto& [nodo, vecinos] : grafo) {
+        if (posicion.find(nodo) != posicion.end()) {
+            for (int vecino : vecinos) {
+                if (posicion.find(vecino) != posicion.end() && posicion[nodo] > posicion[vecino]) {
                     return false; // No cumple con el orden topológico
                 }
             }
@@ -24,53 +24,53 @@ bool isCorrectOrderWithGraph(const std::vector<int>& update, const std::unordere
     }
     return true;
 }
-
+// Programa principal donde se crea el grafo y calcular la suma de las páginas centrales
 int main() {
-    std::ifstream inputFile("input.txt");
-    if (!inputFile) {
+    std::ifstream archivoEntrada("input.txt");
+    if (!archivoEntrada) {
         std::cerr << "Error al abrir el archivo!" << std::endl;
         return 1;
     }
 
     char buffer[1024];
-    std::unordered_map<int, std::vector<int>> graph; // Grafo dirigido para las reglas
-    std::vector<std::vector<int>> updates;          // Actualizaciones de páginas
-    bool readingRules = true;
+    std::unordered_map<int, std::vector<int>> grafo; // Grafo dirigido para las reglas
+    std::vector<std::vector<int>> actualizaciones;  // Actualizaciones de páginas
+    bool leyendoReglas = true;
 
-    while (inputFile.getline(buffer, sizeof(buffer))) {
+    while (archivoEntrada.getline(buffer, sizeof(buffer))) {
         if (strlen(buffer) == 0) { // Detectar línea vacía
-            readingRules = false;
+            leyendoReglas = false;
             continue;
         }
-
-        if (readingRules) {
-            int page1, page2;
-            if (sscanf(buffer, "%d|%d", &page1, &page2) == 2) {
-                graph[page1].push_back(page2); // Agregar una arista dirigida
+        //Esta parte procesa la entrada para construir el grafo y las actualizaciones
+        if (leyendoReglas) {
+            int pagina1, pagina2;
+            if (sscanf(buffer, "%d|%d", &pagina1, &pagina2) == 2) {
+                grafo[pagina1].push_back(pagina2); // Agregar una arista dirigida
             }
         } else {
-            std::vector<int> update;
-            int page;
+            std::vector<int> actualizacion;
+            int pagina;
             char* token = strtok(buffer, ",");
             while (token != nullptr) {
-                sscanf(token, "%d", &page);
-                update.push_back(page);
+                sscanf(token, "%d", &pagina);
+                actualizacion.push_back(pagina);
                 token = strtok(nullptr, ",");
             }
-            updates.push_back(update);
+            actualizaciones.push_back(actualizacion);
         }
     }
-
-    int sumOfMiddlePages = 0;
-    for (const auto& update : updates) {
-        if (isCorrectOrderWithGraph(update, graph)) {
+    //Proceso de cálculo del número de páginas medias
+    int sumaPaginasMedias = 0;
+    for (const auto& actualizacion : actualizaciones) {
+        if (esOrdenCorrectoConGrafo(actualizacion, grafo)) {
             // Calcular la página del medio
-            int middlePage = update[update.size() / 2];
-            sumOfMiddlePages += middlePage;
+            int paginaMedia = actualizacion[actualizacion.size() / 2];
+            sumaPaginasMedias += paginaMedia;
         }
     }
-
-    std::cout << "Suma de las páginas medias: " << sumOfMiddlePages << std::endl;
+    //Impresión de los datos calculados
+    std::cout << "Suma de las páginas medias: " << sumaPaginasMedias << std::endl;
 
     return 0;
 }
