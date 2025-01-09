@@ -1,67 +1,76 @@
 #include <iostream>
 #include <vector>
-#include <string>
-#include <set>
+#include <queue>
+#include <unordered_map>
 #include <fstream>
-#include <sstream>
 #include <cstring>
 
-struct Position {
-    int x, y;
-
-    bool operator<(const Position& other) const {
-        return (x < other.x)  (x == other.x && y < other.y);
-    }
-};
-
-int main() {
-    std::ifstream inputFile("input1.txt");
-
-
-    std::vector<std::string> map;
-    std::string line;
-    while (std::getline(inputFile, line)) {
-        map.push_back(line);
+bool isCorrectOrderWithGraph(const std::vector<int>& update, const std::unordered_map<int, std::vector<int>>& graph) {
+    // Crear un mapa para almacenar la posición de cada página en la actualización
+    std::unordered_map<int, int> position;
+    for (int i = 0; i < update.size(); ++i) {
+        position[update[i]] = i;
     }
 
- 
-    int dx[] = {-1, 0, 1, 0};
-    int dy[] = {0, 1, 0, -1};
-    int direction = 0; 
-
-    Position guard;
-    std::set<Position> visited;
-
-    for (int i = 0; i < map.size(); ++i) {
-        for (int j = 0; j < map[i].size(); ++j) {
-            if (map[i][j] == '^') {
-                guard = {i, j};
-                visited.insert(guard);
-                map[i][j] = '.';
-                break;
+    // Verificar cada nodo y sus vecinos
+    for (const auto& [node, neighbors] : graph) {
+        if (position.find(node) != position.end()) {
+            for (int neighbor : neighbors) {
+                if (position.find(neighbor) != position.end() && position[node] > position[neighbor]) {
+                    return false; // No cumple con el orden topológico
+                }
             }
         }
     }
+    return true;
+}
 
-    while (true) {
-        int nextX = guard.x + dx[direction];
-        int nextY = guard.y + dy[direction];
+int main() {
+    std::ifstream inputFile("input.txt");
+    if (!inputFile) {
+        std::cerr << "Error al abrir el archivo!" << std::endl;
+        return 1;
+    }
 
-        if (nextX < 0  nextX >= map.size()  nextY < 0  nextY >= map[0].size()) {
-            break;
+    char buffer[1024];
+    std::unordered_map<int, std::vector<int>> graph; // Grafo dirigido para las reglas
+    std::vector<std::vector<int>> updates;          // Actualizaciones de páginas
+    bool readingRules = true;
+
+    while (inputFile.getline(buffer, sizeof(buffer))) {
+        if (strlen(buffer) == 0) { // Detectar línea vacía
+            readingRules = false;
+            continue;
         }
 
-        if (map[nextX][nextY] == '#') {
-            direction = (direction + 1) % 4; 
+        if (readingRules) {
+            int page1, page2;
+            if (sscanf(buffer, "%d|%d", &page1, &page2) == 2) {
+                graph[page1].push_back(page2); // Agregar una arista dirigida
+            }
         } else {
-
-            guard.x = nextX;
-            guard.y = nextY;
-            visited.insert(guard);
+            std::vector<int> update;
+            int page;
+            char* token = strtok(buffer, ",");
+            while (token != nullptr) {
+                sscanf(token, "%d", &page);
+                update.push_back(page);
+                token = strtok(nullptr, ",");
+            }
+            updates.push_back(update);
         }
     }
 
-    std::cout << "Posiciones distintas visitadas: " << visited.size() << std::endl;
+    int sumOfMiddlePages = 0;
+    for (const auto& update : updates) {
+        if (isCorrectOrderWithGraph(update, graph)) {
+            // Calcular la página del medio
+            int middlePage = update[update.size() / 2];
+            sumOfMiddlePages += middlePage;
+        }
+    }
+
+    std::cout << "Suma de las páginas medias: " << sumOfMiddlePages << std::endl;
 
     return 0;
 }
