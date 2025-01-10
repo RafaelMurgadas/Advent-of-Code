@@ -29,6 +29,7 @@ grafo con listas de adyacencia el coste de búsqueda es mayor.
 
 Reglas de dependencias: Las reglas están representadas por pares de números pagina1|pagina2 en el archivo de entrada. Esto significa que la pagina1 debe 
 actualizarse antes que la pagina2.
+
 Actualizaciones de páginas: Se da una serie de secuencias que representan las actualizaciones de las páginas en un orden determinado.
 
 Grafo dirigido: Es un mapa (unordered_map) donde las claves son páginas (números enteros) y los valores son vectores de páginas que dependen de esa página 
