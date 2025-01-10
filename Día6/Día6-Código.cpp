@@ -2,82 +2,103 @@
 #include <vector>
 #include <string>
 #include <set>
+#include <memory> // Para std::shared_ptr
 #include <fstream>
-#include <sstream>
-#include <cstring>
 
-// Estructura para representar una posición en la matriz
-struct Position {
-    int x, y;
+// Nodo del árbol que representa una celda del mapa
+struct TreeNode {
+    int x, y; // Coordenadas de la celda
+    std::vector<std::shared_ptr<TreeNode>> children; // Hijos del nodo
 
-    // Sobrecarga del operador < para permitir el uso de Position en std::set
-    bool operator<(const Position& other) const {
-        return (x < other.x) || (x == other.x && y < other.y);
-    }
+    TreeNode(int x, int y) : x(x), y(y) {}
 };
 
-int main() {
-    // Abrir el archivo de entrada
-    std::ifstream inputFile("input1.txt");
+// Estructura para manejar el árbol y el recorrido
+struct MapTree {
+    std::shared_ptr<TreeNode> root; // Raíz del árbol (posición inicial del guardia)
+    std::set<std::pair<int, int>> visited; // Posiciones visitadas
 
-    // Vector para almacenar las líneas del mapa
-    std::vector<std::string> map;
-    std::string line;
-    
-    // Leer cada línea del archivo y almacenarla en el vector
-    while (std::getline(inputFile, line)) {
-        map.push_back(line);
+    // Constructor
+    MapTree(int startX, int startY) {
+        root = std::make_shared<TreeNode>(startX, startY);
+        visited.insert({startX, startY});
     }
 
-    // Arrays para manejar los movimientos del guardia (arriba, derecha, abajo, izquierda)
-    int dx[] = {-1, 0, 1, 0};
-    int dy[] = {0, 1, 0, -1};
-    int direction = 0; // Dirección inicial (0: arriba, 1: derecha, 2: abajo, 3: izquierda)
+    // Construye el árbol recursivamente
+    void buildTree(std::shared_ptr<TreeNode> node, const std::vector<std::string>& map, int dx[], int dy[]) {
+        for (int dir = 0; dir < 4; ++dir) {
+            int nextX = node->x + dx[dir];
+            int nextY = node->y + dy[dir];
 
-    Position guard; // Posición actual del guardia
-    std::set<Position> visited; // Conjunto de posiciones visitadas
+            // Verificar límites y obstáculos
+            if (nextX >= 0 && nextX < map.size() && nextY >= 0 && nextY < map[0].size() && map[nextX][nextY] != '#' && visited.find({nextX, nextY}) == visited.end()) {
+                // Crear nuevo nodo hijo
+                auto child = std::make_shared<TreeNode>(nextX, nextY);
+                node->children.push_back(child);
+                visited.insert({nextX, nextY});
 
-    // Buscar la posición inicial del guardia en el mapa
-    for (int i = 0; i < map.size(); ++i) {
-        for (int j = 0; j < map[i].size(); ++j) {
-            if (map[i][j] == '^') { // '^' indica la posición inicial del guardia
-                guard = {i, j};
-                visited.insert(guard); // Marcar esta posición como visitada
-                map[i][j] = '.'; // Reemplazar el símbolo del guardia por suelo libre
-                break;
+                // Llamada recursiva para construir el subárbol
+                buildTree(child, map, dx, dy);
             }
         }
     }
 
-    // Bucle para mover al guardia hasta que se encuentre con un borde o un obstáculo
-    while (true) {
-        int nextX = guard.x + dx[direction]; // Calcular la próxima posición en x
-        int nextY = guard.y + dy[direction]; // Calcular la próxima posición en y
-
-        // Verificar si la próxima posición está fuera de los límites del mapa
-        if (nextX < 0 || nextX >= map.size() || nextY < 0 || nextY >= map[0].size()) {
-            break; // Salir del bucle si está fuera de los límites
-        }
-
-        // Si la próxima posición es un obstáculo ('#')
-        if (map[nextX][nextY] == '#') {
-            direction = (direction + 1) % 4; // Cambiar dirección (girar a la derecha)
-        } else {
-            // Mover al guardia a la nueva posición
-            guard.x = nextX;
-            guard.y = nextY;
-
-            // Marcar la nueva posición como visitada
-            visited.insert(guard);
+    // Recorre el árbol y cuenta las posiciones visitadas
+    void traverseTree(std::shared_ptr<TreeNode> node, std::set<std::pair<int, int>>& visitedPositions) {
+        visitedPositions.insert({node->x, node->y});
+        for (const auto& child : node->children) {
+            traverseTree(child, visitedPositions);
         }
     }
+};
 
-    // Imprimir el número total de posiciones distintas visitadas
-    std::cout << "Posiciones distintas visitadas: " << visited.size() << std::endl;
+int main() {
+    // Leer el archivo de entrada
+    std::ifstream inputFile("input1.txt");
+    if (!inputFile) {
+        std::cerr << "No se pudo abrir el archivo de entrada." << std::endl;
+        return 1;
+    }
 
-    return 0;
-}
-    std::cout << "Posiciones distintas visitadas: " << visited.size() << std::endl;
+    // Cargar el mapa desde el archivo
+    std::vector<std::string> map;
+    std::string line;
+    while (std::getline(inputFile, line)) {
+        map.push_back(line);
+    }
+
+    // Direcciones de movimiento (arriba, derecha, abajo, izquierda)
+    int dx[] = {-1, 0, 1, 0};
+    int dy[] = {0, 1, 0, -1};
+
+    // Encontrar la posición inicial del guardia
+    int startX = -1, startY = -1;
+    for (int i = 0; i < map.size(); ++i) {
+        for (int j = 0; j < map[i].size(); ++j) {
+            if (map[i][j] == '^') {
+                startX = i;
+                startY = j;
+                break;
+            }
+        }
+        if (startX != -1) break;
+    }
+
+    if (startX == -1 || startY == -1) {
+        std::cerr << "No se encontró la posición inicial del guardia." << std::endl;
+        return 1;
+    }
+
+    // Construir el árbol a partir de la posición inicial
+    MapTree tree(startX, startY);
+    tree.buildTree(tree.root, map, dx, dy);
+
+    // Recorrer el árbol y contar las posiciones distintas visitadas
+    std::set<std::pair<int, int>> visitedPositions;
+    tree.traverseTree(tree.root, visitedPositions);
+
+    // Imprimir el número de posiciones visitadas
+    std::cout << "Posiciones distintas visitadas: " << visitedPositions.size() << std::endl;
 
     return 0;
 }
