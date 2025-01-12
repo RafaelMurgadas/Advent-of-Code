@@ -1,0 +1,9 @@
+//SE DEBE DE TENER DESCARGADO EN EL MISMO REPOSITORIO TANTO EL ARCHIVO .cpp COMO EL ARCHIVO input.txt
+
+//Instrucciones para Linux
+g++ -o Dia8_Codigo Día8-Código.cpp
+./Dia8_Codigo
+
+//Instrucciones para Windows con MinGW
+g++ -o Dia8_Codigo.exe Día8-Código.cpp
+./Dia8_Codigo.exe
