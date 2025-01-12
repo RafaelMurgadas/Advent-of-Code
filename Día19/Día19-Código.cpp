@@ -9,7 +9,6 @@ using namespace std;
 
 unordered_map<string, int> memo; //Tabla hash de memoria para guardar los resultados de los subproblemas
 
-
 bool CountWays(const vector<string>& words, const string& target) {
     if (memo.count(target)){ //Comprueba si el target ya ha sido calculado
         return memo[target];
@@ -31,7 +30,6 @@ bool CountWays(const vector<string>& words, const string& target) {
     return posible;
 }
 
-
 int main() {
     string D;
     ifstream infile("input.txt");
@@ -48,17 +46,14 @@ int main() {
     vector<string> towels; 
     vector<string> designs;
 
-
     for (int i = 0; i < raw_lines.size(); i++) { //Separa towels de designs
         if (i == 0) {
             temp_towels = raw_lines[i];
         } else {
             if(raw_lines[i].empty()) continue;
             designs.push_back(raw_lines[i]);
-           
         }
     }
-
 
     stringstream ss(temp_towels); 
     string word;
@@ -76,10 +71,6 @@ int main() {
             ans++;
         }
     }
-    
     cout << ans<< endl;
     return 0;
-
-
-   
 }
