@@ -1,9 +1,9 @@
 //SE DEBE DE TENER DESCARGADO EN EL MISMO REPOSITORIO TANTO EL ARCHIVO .cpp COMO EL ARCHIVO input.txt
 
 //Instrucciones para Linux
-g++ -o Dia2-Codigo Día2-Código.cpp
-./Dia2-Codigo
+g++ -o Dia2_Codigo Día2-Código.cpp
+./Dia2_Codigo
 
 //Instrucciones para Windows con MinGW
-g++ -o Dia2-Codigo.exe Día2-Código.cpp
-./Dia2-Codigo.exe
+g++ -o Dia2_Codigo.exe Día2-Código.cpp
+./Dia2_Codigo.exe
