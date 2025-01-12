@@ -1,0 +1,9 @@
+//SE DEBE DE TENER DESCARGADO EN EL MISMO REPOSITORIO TANTO EL ARCHIVO .cpp COMO EL ARCHIVO input1.txt
+
+//Instrucciones para Linux
+g++ -o Dia6_Codigo Día6-Código.cpp
+./Dia6_Codigo
+
+//Instrucciones para Windows con MinGW
+g++ -o Dia6_Codigo.exe Día6-Código.cpp
+./Dia6_Codigo.exe
