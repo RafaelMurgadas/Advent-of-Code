@@ -1,0 +1,9 @@
+#SE DEBE DE TENER DESCARGADO EN EL MISMO REPOSITORIO TANTO EL ARCHIVO .cpp COMO EL ARCHIVO input.txt
+
+#Instrucciones para Linux
+g++ -o secuencias_safe programa.cpp
+./secuencias_safe
+
+#Instrucciones para Windows con MinGW
+g++ -o secuencias_safe.exe programa.cpp
+secuencias_safe.exe
