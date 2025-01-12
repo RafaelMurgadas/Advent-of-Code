@@ -24,3 +24,10 @@ combinaciones para formar un diseño usando técnicas de búsqueda como el backt
 árbol y elimina la necesidad de construir explícitamente una estructura jerárquica.
 
 ---CÓMO SE HA ABORDADO EL PROBLEMA---
+CountWays: Determina si un diseño objetivo (target) puede formarse usando los patrones disponibles (words), aplicando programación dinámica con memorización. Si el diseño ya fue calculado, devuelve su valor almacenado en la tabla hash (memo), pero si el diseño es vacío, devuelve true (es posible formarlo), después recorre los patrones disponibles, verificando si alguno es un prefijo del diseño. Si un patrón es un prefijo, llama recursivamente para el resto del diseño y almacena en memo el resultado (true o false) para evitar cálculos redundantes.
+
+main: Lee la entrada, procesa los patrones y diseños objetivo, y cuenta cuántos diseños pueden formarse leyendo los patrones (towels) desde la primera línea del archivo y los diseños objetivo (designs) de las líneas subsiguientes, luego divide los patrones usando un delimitador (, ) y almacena cada uno como elementos del vector towels. Para cada diseño en designs, llama a CountWays para verificar si puede formarse e incrementa un contador (ans) por cada diseño válido y lo imprime al final.
+
+memo: Almacena los resultados de subproblemas ya resueltos, asociando cada diseño parcial (target) con su resultado (true o false).
+
+Al final, el programa imprime el número total de diseños que pueden formarse respetando las dependencias definidas por los patrones disponibles.
