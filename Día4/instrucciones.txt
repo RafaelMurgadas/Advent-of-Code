@@ -1,0 +1,9 @@
+//SE DEBE DE TENER DESCARGADO EN EL MISMO REPOSITORIO TANTO EL ARCHIVO .cpp COMO EL ARCHIVO DatosXMAS.txt
+
+//Instrucciones para Linux
+g++ -o advent_day4 programa.cpp
+./advent_day4
+
+//Instrucciones para Windows con MinGW
+g++ -o advent_day4.exe programa.cpp
+advent_day4.exe
