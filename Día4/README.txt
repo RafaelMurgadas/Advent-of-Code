@@ -29,20 +29,21 @@ El desafío radica en la eficiencia del algoritmo, especialmente cuando se traba
 
 ---MÉTODOS DE RESOLUCIÓN EMPLEADOS Y POSIBLES---
 En este caso, hemos optado por utilizar un árbol de sufijos como estructura de datos para resolver el problema de búsqueda de patrones en una cuadrícula de 
-caracteres. Esta estructura es ideal debido a su eficiencia en la búsqueda de subcadenas dentro de una cadena más grande, lo que resulta particularmente útil al 
-buscar palabras como "XMAS" y "X-MAS" en las filas, columnas y diagonales de la cuadrícula. El uso del árbol de sufijos permite realizar búsquedas rápidas sin tener 
-que repetir las comparaciones de subcadenas de forma redundante, lo que mejora significativamente el rendimiento, especialmente con grandes cantidades de datos.
+caracteres. Esta elección se basa en la técnica de divide y vencerás, ya que el árbol descompone la cadena de texto en subcadenas (sufijos) más pequeñas, lo que 
+facilita la búsqueda de patrones como "XMAS" y "X-MAS" dentro de la cuadrícula. Al dividir la búsqueda en subproblemas más pequeños, se pueden resolver de manera 
+más eficiente sin necesidad de realizar comparaciones redundantes a lo largo de toda la cuadrícula. Este enfoque mejora significativamente el rendimiento, 
+especialmente cuando se manejan grandes cantidades de datos.
 
-El árbol de sufijos también facilita la búsqueda en varias direcciones de la cuadrícula, al descomponer la cadena en sufijos y almacenar las posiciones donde los 
-patrones ocurren. Este enfoque permite encontrar todos los casos de la palabra "XMAS" y el patrón "X-MAS" de manera eficiente, sin necesidad de recorrer manualmente 
-toda la cuadrícula. Además, esta estructura optimiza el proceso de búsqueda al evitar la necesidad de realizar búsquedas recursivas o realizar comparaciones 
-costosas de manera repetitiva.
+El árbol de sufijos aprovecha la técnica de divide y vencerás al descomponer la cadena en sus sufijos y almacenar las posiciones donde los patrones ocurren. De esta 
+manera, en lugar de buscar la palabra "XMAS" o el patrón "X-MAS" en cada fila, columna o diagonal de la cuadrícula de forma lineal, se divide el problema en partes 
+más manejables, buscando en subcadenas específicas que ya han sido procesadas y almacenadas eficientemente en el árbol. Esto permite encontrar todas las ocurrencias 
+de los patrones de manera mucho más rápida y sin tener que recorrer manualmente toda la cuadrícula.
 
-Una alternativa a esta solución sería el uso de una tabla hash, que mapearía directamente las posiciones de las palabras a buscar en la cuadrícula. Sin embargo, las 
-búsquedas en una tabla hash son simples pero no tan eficientes en casos donde las palabras deben buscarse en diferentes direcciones (horizontal, vertical, 
-diagonal), ya que no aprovecha la estructura de sufijos para agilizar la búsqueda en cadenas largas o superpuestas. El árbol de sufijos, por otro lado, optimiza 
-este proceso al manejar de manera eficaz las relaciones entre las subcadenas y las posiciones donde se encuentran.
-
+Una alternativa a esta solución sería el uso de una tabla hash, que mapearía directamente las posiciones de las palabras a buscar en la cuadrícula. Aunque las 
+búsquedas en una tabla hash son simples, no aprovechan la técnica de divide y vencerás en el mismo nivel que el árbol de sufijos. Al no dividir la cadena en 
+subproblemas más pequeños, la tabla hash no optimiza la búsqueda en direcciones múltiples (horizontal, vertical, diagonal) de manera tan eficiente, especialmente 
+cuando las palabras deben buscarse en secuencias largas o superpuestas. El árbol de sufijos, en cambio, maneja eficazmente las relaciones entre las subcadenas y las 
+posiciones de las palabras, aplicando la estrategia de divide y vencerás para reducir el coste de las búsquedas repetitivas.
 ---CÓMO SE HA ABORDADO EL PROBLEMA---
 SuffixTree: Implementación de un árbol de sufijos para realizar búsquedas de subcadenas dentro de una cadena, permite verificar rápidamente si una palabra o patrón 
 está contenido en la cadena sin tener que recorrerla repetidamente.
@@ -78,3 +79,6 @@ en esa diagonal. Si la palabra se encuentra en la diagonal, incrementa el contad
 main: Función principal del programa. Crea un objeto de la clase AdventDay4, que gestiona la cuadrícula de letras y las búsquedas de palabras. Llama a la función 
 xmas_search para buscar la palabra "XMAS" en todas las direcciones y luego llama a diag_x_mas_search para buscar el patrón "X-MAS" en forma de "X". Finalmente, 
 imprime los resultados mediante print_results.
+
+Al final, el programa imprime dos resultados distintos, primero el número de ocurrencias de "XMAS" (Parte 1) y luego el número de ocurrencias del patrón "X-MAS" en 
+forma de "X" (Parte 2).
